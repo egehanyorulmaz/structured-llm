@@ -56,7 +56,6 @@ class GeminiProvider(BaseProvider):
             base_client = genai.Client(api_key=api_key)
             self._sync_client = instructor.from_genai(
                 client=base_client,
-                mode=instructor.Mode.GENAI_JSON,
             )
 
     def _initialize_async_client(self) -> None:
@@ -66,7 +65,6 @@ class GeminiProvider(BaseProvider):
             base_client = genai.Client(api_key=api_key)
             self._async_client = instructor.from_genai(
                 client=base_client,
-                mode=instructor.Mode.GENAI_JSON,
                 use_async=True,
             )
 
