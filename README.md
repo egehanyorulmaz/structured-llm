@@ -133,9 +133,9 @@ client = StructuredLLMClient(config=config)
 
 | Provider | Default Model | Environment Variable |
 |----------|---------------|---------------------|
-| OpenAI | gpt-4o | `OPENAI_API_KEY` |
-| Anthropic | claude-sonnet-4-20250514 | `ANTHROPIC_API_KEY` |
-| Gemini | gemini-2.0-flash | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
+| OpenAI | gpt-4.1 | `OPENAI_API_KEY` |
+| Anthropic | claude-sonnet-4-5-20250929 | `ANTHROPIC_API_KEY` |
+| Gemini | gemini-2.5-flash | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
 
 ## Error Handling
 

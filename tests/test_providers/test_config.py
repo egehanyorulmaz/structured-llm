@@ -54,17 +54,17 @@ class TestProviderConfig:
     def test_default_model_openai(self):
         """Test default model for OpenAI."""
         config = ProviderConfig(provider_type=ProviderType.OPENAI)
-        assert config.get_default_model() == "gpt-4o"
+        assert config.get_default_model() == "gpt-4.1"
 
     def test_default_model_anthropic(self):
         """Test default model for Anthropic."""
         config = ProviderConfig(provider_type=ProviderType.ANTHROPIC)
-        assert config.get_default_model() == "claude-sonnet-4-20250514"
+        assert config.get_default_model() == "claude-sonnet-4-5-20250929"
 
     def test_default_model_gemini(self):
         """Test default model for Gemini."""
         config = ProviderConfig(provider_type=ProviderType.GEMINI)
-        assert config.get_default_model() == "gemini-2.0-flash"
+        assert config.get_default_model() == "gemini-2.5-flash"
 
     def test_custom_model_override(self):
         """Test custom model overrides default."""

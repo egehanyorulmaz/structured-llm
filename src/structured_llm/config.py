@@ -66,9 +66,9 @@ class ProviderConfig(BaseModel):
         :rtype: str
         """
         defaults = {
-            ProviderType.OPENAI: "gpt-4o",
-            ProviderType.ANTHROPIC: "claude-sonnet-4-20250514",
-            ProviderType.GEMINI: "gemini-2.0-flash",
+            ProviderType.OPENAI: "gpt-4.1",
+            ProviderType.ANTHROPIC: "claude-sonnet-4-5-20250929",
+            ProviderType.GEMINI: "gemini-2.5-flash",
         }
         return self.model or defaults[self.provider_type]
 
