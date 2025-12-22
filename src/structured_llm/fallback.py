@@ -81,10 +81,29 @@ class FallbackManager:
         self._initialize_providers()
 
     def _initialize_providers(self) -> None:
-        """Initialize provider instances from configurations."""
+        """
+        Initialize provider instances from configurations.
+        
+        Providers that fail to initialize are skipped and logged.
+        
+        :raises AllProvidersFailedError: If no providers successfully initialize
+        """
         for config in self.provider_configs:
-            provider = ProviderFactory.create(config)
-            self._providers.append(provider)
+            try:
+                provider = ProviderFactory.create(config)
+                self._providers.append(provider)
+                logger.info(f"Successfully initialized provider: {config.provider_type.value}")
+            except Exception as e:
+                logger.warning(
+                    f"Failed to initialize provider {config.provider_type.value}: {e}. "
+                    f"Skipping this provider."
+                )
+                continue
+        
+        if not self._providers:
+            raise AllProvidersFailedError(
+                "No providers could be initialized. Check your API keys and configuration."
+            )
 
     def _create_retry_decorator(self):
         """
