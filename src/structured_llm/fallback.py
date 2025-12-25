@@ -22,6 +22,7 @@ from structured_llm.providers.base import BaseProvider
 from structured_llm.providers.openai import OpenAIProvider
 from structured_llm.providers.anthropic import AnthropicProvider
 from structured_llm.providers.gemini import GeminiProvider
+from structured_llm.providers.vertexai import VertexAIProvider
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -35,6 +36,7 @@ class ProviderFactory:
         ProviderType.OPENAI: OpenAIProvider,
         ProviderType.ANTHROPIC: AnthropicProvider,
         ProviderType.GEMINI: GeminiProvider,
+        ProviderType.VERTEXAI: VertexAIProvider,
     }
 
     @classmethod

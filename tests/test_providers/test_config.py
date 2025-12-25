@@ -66,6 +66,11 @@ class TestProviderConfig:
         config = ProviderConfig(provider_type=ProviderType.GEMINI)
         assert config.get_default_model() == "gemini-2.5-flash"
 
+    def test_default_model_vertexai(self):
+        """Test default model for Vertex AI."""
+        config = ProviderConfig(provider_type=ProviderType.VERTEXAI)
+        assert config.get_default_model() == "gemini-2.5-flash-lite"
+
     def test_custom_model_override(self):
         """Test custom model overrides default."""
         config = ProviderConfig(

@@ -2,7 +2,7 @@
 Structured LLM - A unified interface for structured LLM outputs.
 
 This package provides a simple way to get structured outputs from various LLM providers
-(OpenAI, Anthropic, Gemini) with automatic Pydantic validation and retry logic.
+(OpenAI, Anthropic, Gemini, Vertex AI) with automatic Pydantic validation and retry logic.
 
 Example usage::
 
@@ -26,7 +26,7 @@ Example usage::
     # With fallback providers
     client = StructuredLLMClient(
         provider="openai",
-        fallback_providers=["anthropic", "gemini"],
+        fallback_providers=["anthropic", "gemini", "vertexai"],
     )
 """
 
@@ -50,6 +50,7 @@ from structured_llm.providers import (
     OpenAIProvider,
     AnthropicProvider,
     GeminiProvider,
+    VertexAIProvider,
 )
 from structured_llm.fallback import FallbackManager, ProviderFactory
 
@@ -75,6 +76,7 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "GeminiProvider",
+    "VertexAIProvider",
     # Fallback
     "FallbackManager",
     "ProviderFactory",

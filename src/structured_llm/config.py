@@ -12,6 +12,7 @@ class ProviderType(str, Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GEMINI = "gemini"
+    VERTEXAI = "vertexai"
 
 
 class RetryConfig(BaseModel):
@@ -69,6 +70,7 @@ class ProviderConfig(BaseModel):
             ProviderType.OPENAI: "gpt-4.1",
             ProviderType.ANTHROPIC: "claude-sonnet-4-5-20250929",
             ProviderType.GEMINI: "gemini-2.5-flash",
+            ProviderType.VERTEXAI: "gemini-2.5-flash-lite",
         }
         return self.model or defaults[self.provider_type]
 
