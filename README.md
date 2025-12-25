@@ -5,7 +5,7 @@ A unified interface for structured LLM outputs with Pydantic validation, automat
 ## Features
 
 - **Structured Outputs**: Get Pydantic-validated responses from LLMs
-- **Multi-Provider Support**: OpenAI, Anthropic, and Google Gemini
+- **Multi-Provider Support**: OpenAI, Anthropic, Google Gemini, and Vertex AI
 - **Automatic Retries**: Built-in retry logic for validation failures
 - **Provider Fallback**: Automatically switch to backup providers on failures
 - **Sync & Async**: Both synchronous and asynchronous APIs
@@ -45,6 +45,30 @@ print(result.tags)  # ['italian', 'pasta', 'quick-meal', 'comfort-food']
 print(result.confidence)  # 0.95
 ```
 
+### Using Vertex AI
+
+```python
+from structured_llm import StructuredLLMClient
+from pydantic import BaseModel
+
+class RecipeTags(BaseModel):
+    tags: list[str]
+    confidence: float
+
+# Initialize with Vertex AI provider
+client = StructuredLLMClient(provider="vertexai")
+
+# Get structured output
+result = client.complete(
+    response_model=RecipeTags,
+    user_prompt="Tag this recipe: Pasta Carbonara with eggs, pecorino, guanciale",
+    system_prompt="You are a recipe tagger. Return relevant tags and your confidence."
+)
+
+print(result.tags)  # ['italian', 'pasta', 'quick-meal', 'comfort-food']
+print(result.confidence)  # 0.95
+```
+
 ## Provider Fallback
 
 Configure fallback providers to ensure reliability:
@@ -52,11 +76,11 @@ Configure fallback providers to ensure reliability:
 ```python
 client = StructuredLLMClient(
     provider="openai",
-    fallback_providers=["anthropic", "gemini"],
+    fallback_providers=["anthropic", "gemini", "vertexai"],
     max_retries=3
 )
 
-# If OpenAI fails, automatically tries Anthropic, then Gemini
+# If OpenAI fails, automatically tries Anthropic, then Gemini, then Vertex AI
 result = client.complete(
     response_model=RecipeTags,
     user_prompt="Tag this recipe..."
@@ -90,7 +114,8 @@ Set API keys via environment variables:
 ```bash
 export OPENAI_API_KEY="your-openai-key"
 export ANTHROPIC_API_KEY="your-anthropic-key"
-export GOOGLE_API_KEY="your-google-key"  # or GEMINI_API_KEY
+export GOOGLE_API_KEY="your-google-key"  # For both Gemini and Vertex AI
+export VERTEX_AI_API_KEY="your-vertex-ai-key"  # Alternative for Vertex AI
 ```
 
 ### Advanced Configuration
@@ -136,6 +161,15 @@ client = StructuredLLMClient(config=config)
 | OpenAI | gpt-4.1 | `OPENAI_API_KEY` |
 | Anthropic | claude-sonnet-4-5-20250929 | `ANTHROPIC_API_KEY` |
 | Gemini | gemini-2.5-flash | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
+| Vertex AI | gemini-2.5-flash-lite | `VERTEX_AI_API_KEY` or `GOOGLE_API_KEY` |
+
+### Gemini vs Vertex AI
+
+Both providers use Google's Gemini models but with different endpoints:
+- **Gemini Provider**: Uses Google AI Studio API (`generativelanguage.googleapis.com`)
+- **Vertex AI Provider**: Uses Vertex AI API (`aiplatform.googleapis.com`)
+
+Choose based on which platform you're using. See `docs/vertexai_usage.md` for detailed Vertex AI documentation.
 
 ## Error Handling
 
