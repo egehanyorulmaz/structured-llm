@@ -152,7 +152,7 @@ class FallbackManager:
 
         for provider in self._providers:
             try:
-                logger.info(f"Attempting completion with provider: {provider.provider_name}")
+                logger.info(f"Using provider: {provider.provider_name}")
                 result = provider.complete(
                     response_model=response_model,
                     user_prompt=user_prompt,
@@ -199,7 +199,7 @@ class FallbackManager:
 
         for provider in self._providers:
             try:
-                logger.info(f"Attempting async completion with provider: {provider.provider_name}")
+                logger.info(f"Using provider: {provider.provider_name}")
                 result = await provider.acomplete(
                     response_model=response_model,
                     user_prompt=user_prompt,
