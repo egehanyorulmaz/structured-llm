@@ -289,6 +289,38 @@ class TestVertexAIProviderSchemaConversion:
         if "required" in SampleResponse.model_json_schema():
             assert "required" in schema
 
+    def test_pydantic_to_json_schema_resolves_refs(self):
+        """Test that $ref references are resolved inline."""
+        from enum import Enum
+        
+        class Color(str, Enum):
+            RED = "red"
+            BLUE = "blue"
+        
+        class NestedModel(BaseModel):
+            colors: list[Color]
+            name: str
+        
+        config = ProviderConfig(
+            provider_type=ProviderType.VERTEXAI,
+            api_key="test-key",
+        )
+        provider = VertexAIProvider(config)
+        
+        schema = provider._pydantic_to_json_schema(NestedModel)
+        
+        # Verify no $ref exists in the schema
+        schema_str = json.dumps(schema)
+        assert "$ref" not in schema_str, "Schema should not contain any $ref references"
+        
+        # Verify the enum is properly inlined
+        assert "properties" in schema
+        assert "colors" in schema["properties"]
+        colors_schema = schema["properties"]["colors"]
+        assert colors_schema["type"] == "array"
+        # The items should be resolved inline, not a reference
+        assert "items" in colors_schema
+
 
 class TestVertexAIProviderComplete:
     """Tests for synchronous completion."""

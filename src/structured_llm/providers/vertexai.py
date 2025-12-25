@@ -145,24 +145,58 @@ class VertexAIProvider(BaseProvider):
                 cause=e,
             )
 
+    def _resolve_refs(self, schema: Dict[str, Any], definitions: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Recursively resolve $ref references in a JSON schema.
+
+        :param schema: Schema object that may contain $ref
+        :type schema: Dict[str, Any]
+        :param definitions: Definitions/components containing referenced schemas
+        :type definitions: Dict[str, Any]
+        :return: Schema with all $ref resolved inline
+        :rtype: Dict[str, Any]
+        """
+        if isinstance(schema, dict):
+            if "$ref" in schema:
+                ref_path = schema["$ref"]
+                if ref_path.startswith("#/$defs/"):
+                    def_name = ref_path.replace("#/$defs/", "")
+                    if def_name in definitions:
+                        resolved = definitions[def_name].copy()
+                        return self._resolve_refs(resolved, definitions)
+                return schema
+            
+            resolved = {}
+            for key, value in schema.items():
+                if key == "$defs":
+                    continue
+                resolved[key] = self._resolve_refs(value, definitions)
+            return resolved
+        elif isinstance(schema, list):
+            return [self._resolve_refs(item, definitions) for item in schema]
+        else:
+            return schema
+
     def _pydantic_to_json_schema(self, model: Type[BaseModel]) -> Dict[str, Any]:
         """
         Convert Pydantic model to JSON schema for Vertex AI.
+        Resolves all $ref references to create a fully inline schema.
 
         :param model: Pydantic model class
         :type model: Type[BaseModel]
-        :return: JSON schema dictionary
+        :return: JSON schema dictionary without $ref references
         :rtype: Dict[str, Any]
         """
-        schema = model.model_json_schema()
+        full_schema = model.model_json_schema()
+        definitions = full_schema.get("$defs", {})
         
         vertex_schema = {
             "type": "object",
-            "properties": schema.get("properties", {}),
+            "properties": self._resolve_refs(full_schema.get("properties", {}), definitions),
         }
         
-        if "required" in schema:
-            vertex_schema["required"] = schema["required"]
+        if "required" in full_schema:
+            vertex_schema["required"] = full_schema["required"]
         
         return vertex_schema
 
